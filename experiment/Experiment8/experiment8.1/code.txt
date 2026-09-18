@@ -1,0 +1,27 @@
+create or replace procedure update_sal_proc1(
+in p_empid int,
+out status varchar(20),
+inout p_salary numeric(20, 2)
+)
+as $$
+declare
+current_sal numeric;
+begin
+
+select salary into current_sal
+from emp
+where emp_id = p_empid;
+if not found then 
+raise exception 'Employee Not Found';
+end if;
+
+p_salary = current_sal + p_salary;
+update emp
+set salary = p_salary
+where emp_id = p_empid;
+
+status = 'Success';
+end;
+$$ language plpgsql
+
+call update_sal_proc1(101, NULL, 5300);
